@@ -1,13 +1,16 @@
 import React from 'react';
 import {useState, useEffect } from 'react';
-import {View, Text, StyleSheet, FlatList, Image} from 'react-native';
+import {View, Text, StyleSheet, FlatList, Image, TouchableOpacity} from 'react-native';
+import {Icon} from 'react-native-elements'
 import {movieData} from '../../data/MovieData.js'
 import {ShowMovie} from '../components/MovieComponent'
+import {ButtonComponent} from '../components/ButtonComponent'
 
-const HomeScreen = () => {
-
+const HomeScreen = (props) => {
+    const {navigation} = props;
     const [recommended, setRecommended] = useState([])
     const [mostViewed, setMostViewed] = useState([])
+    const [allMostViewed, setAllMostViewed] = useState([])
     const compareRating = (a,b) => {
         const ratingA = a.rating;
         const ratingB = b.rating;
@@ -32,10 +35,17 @@ const HomeScreen = () => {
     }
 
     useEffect(() => {
+        const threeRecommended = []
+        const threeViewed = []
         const sortedRecommended = [...movieData].sort(compareRating);
         const sortedMostViewed = [...movieData].sort(compareViewers);
-        setRecommended(sortedRecommended)
-        setMostViewed(sortedMostViewed)
+        setAllMostViewed(sortedMostViewed)
+        for(let i = 0; i< 3; i++){
+            threeRecommended.push(sortedRecommended[i])
+            threeViewed.push(sortedMostViewed[i])
+        }
+        setRecommended(threeRecommended)
+        setMostViewed(threeViewed)
     }, [])
 
     return(
@@ -45,10 +55,16 @@ const HomeScreen = () => {
                     <View style={styles.dataContainer}>
                         <Image style={styles.movieImage} source={{uri : item.imageLink}} />
                         <View style={styles.movieDescriptionContainer}>
-                            <Text style={styles.title}>{item.title}</Text>
-                            <View style={styles.yearContainer}>
+                            <View style={{flexDirection : 'row'}}>
+                                <Icon name="title" type="material" style={{marginRight: 15}} />
+                                <Text style={styles.title}>{item.title}</Text>
+                            </View>
+                            <View style={[styles.yearContainer], {flexDirection : 'row'}}>
+                                <Icon name="calendar" type="antdesign" style={{marginRight: 15}} />
                                 <Text>{item.year}</Text>
                             </View>
+                            <View style={{flexDirection: 'row', marginTop: 5}}>
+                                <Icon name="star-rate" type="material" style={{marginRight: 15}} />
                             {
                                 item.rating === 5 ?
                                 <Image style={styles.ratingImage} source={require('../../assets/images/five-stars.png')} /> :
@@ -61,16 +77,25 @@ const HomeScreen = () => {
                                 item.rating === 1 ?
                                 <Image style={styles.ratingImage} source={require('../../assets/images/star.png')} /> : null
                             }
+                            </View>
+                            <ButtonComponent onPress={() => {
+                                navigation.navigate('DetailMovie', {item})
+                            }} />
                         </View>
                     </View>
                 )
             }} 
             ListHeaderComponent = {
                 <View>
-                    <View style={styles.mainCatagoryContainer}>
+                    <View style={styles.mainCategoryContainer}>
                         <View style={styles.categoryContainer}>
                             <Text style={styles.categoryText}>
                                 Most Viewed
+                            </Text>
+                            <Text style={styles.seeAllContainer}>
+                                <TouchableOpacity onPress={() => navigation.navigate('MostViewedScreen', {allMostViewed})}>
+                                    <Text style={styles.seeAllText}>See All</Text>
+                                </TouchableOpacity>
                             </Text>
                         </View>
                     </View>
@@ -78,12 +103,30 @@ const HomeScreen = () => {
                         return(
                             <ShowMovie image={item.imageLink} title={item.title} viewers={item.viewers} />
                         )
-                    }} />
+                    }} 
+                    contentContainerStyle={{
+                        flex:mostViewed.length === 0 ? 1 : 0
+                    }}
+                    ListEmptyComponent = {
+                        <View style={{alignItems: 'center', flex: 1}}>
+                            <Text>
+                                No Items in this category
+                            </Text>
+                        </View>
+                    }
+                    />
                     <View styles={styles.mainCategoryContainer}>
                         <View style={styles.categoryContainer}>
                             <Text style={styles.categoryText}>Recommended</Text>
                         </View>
                     </View>
+                </View>
+            }
+            ListEmptyComponent = {
+                <View style={{alignItems: 'center'}}>
+                    <Text>
+                        No Items in this category
+                    </Text>
                 </View>
             }
             // ListFooterComponent = {
@@ -137,7 +180,9 @@ const styles = StyleSheet.create({
         flexDirection: 'row'
     },
     categoryContainer : {
-        flex: 1
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent : 'space-between'
     },
     categoryText : {
         fontSize : 20,
@@ -146,6 +191,9 @@ const styles = StyleSheet.create({
     ratingImage : {
         width : 100,
         height : 20
+    },seeAllText : {
+        color : '#009688',
+        textDecorationLine : 'underline'
     }
 })
 
