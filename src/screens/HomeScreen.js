@@ -11,6 +11,7 @@ const HomeScreen = (props) => {
     const [recommended, setRecommended] = useState([])
     const [mostViewed, setMostViewed] = useState([])
     const [allMostViewed, setAllMostViewed] = useState([])
+    const [allRecommended, setAllRecommended] = useState([])
     const compareRating = (a,b) => {
         const ratingA = a.rating;
         const ratingB = b.rating;
@@ -40,6 +41,7 @@ const HomeScreen = (props) => {
         const sortedRecommended = [...movieData].sort(compareRating);
         const sortedMostViewed = [...movieData].sort(compareViewers);
         setAllMostViewed(sortedMostViewed)
+        setAllRecommended(sortedRecommended)
         for(let i = 0; i< 3; i++){
             threeRecommended.push(sortedRecommended[i])
             threeViewed.push(sortedMostViewed[i])
@@ -52,7 +54,7 @@ const HomeScreen = (props) => {
         <View style={styles.mainContainer}>
             <FlatList data={recommended} keyExtractor = {(item) => item.id} contentContainerStyle={styles.flatListContainer} renderItem = {({item}) => {
                 return(
-                    <View style={styles.dataContainer}>
+                    <View style={[styles.dataContainer, {marginTop : 20}]}>
                         <Image style={styles.movieImage} source={{uri : item.imageLink}} />
                         <View style={styles.movieDescriptionContainer}>
                             <View style={{flexDirection : 'row'}}>
@@ -87,7 +89,7 @@ const HomeScreen = (props) => {
             }} 
             ListHeaderComponent = {
                 <View>
-                    <View style={styles.mainCategoryContainer}>
+                    <View style={[styles.mainCategoryContainer,]}>
                         <View style={styles.categoryContainer}>
                             <Text style={styles.categoryText}>
                                 Most Viewed
@@ -115,9 +117,14 @@ const HomeScreen = (props) => {
                         </View>
                     }
                     />
-                    <View styles={styles.mainCategoryContainer}>
+                    <View styles={[styles.mainCategoryContainer, {flexDirection: 'row', marginBottom: 40}]}>
                         <View style={styles.categoryContainer}>
-                            <Text style={styles.categoryText}>Recommended</Text>
+                            <Text style={[styles.categoryText, ]}>Recommended</Text>
+                        </View>
+                        <View style={[styles.seeAllContainer,{alignItems: 'flex-end', flex: 1, justifyContent: 'center', marginTop: -20, marginRight: 10}]}>
+                            <TouchableOpacity onPress={() => navigation.navigate('RecommendedScreen', {allRecommended})}>
+                                <Text style={styles.seeAllText}>See All</Text>
+                            </TouchableOpacity>
                         </View>
                     </View>
                 </View>
@@ -177,7 +184,9 @@ const styles = StyleSheet.create({
         marginTop : 8,
         marginLeft : 8,
         marginRight : 8,
-        flexDirection: 'row'
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent : 'space-between',
     },
     categoryContainer : {
         flex: 1,
