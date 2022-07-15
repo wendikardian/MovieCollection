@@ -1,8 +1,13 @@
 import React from 'react';
 import {View, Text, Image, StyleSheet} from 'react-native';
+import {Icon} from 'react-native-elements'
+import { EyeOutlined } from '@ant-design/icons'
 
 export const ShowMovie = (props) => {
     const {image, title, viewers} = props;
+    const numberWithCommas = (number) => {
+        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+    }
     return(
         <View style={styles.horizontalDataContainer}>
             <Image style={styles.movieImage} source={{uri: image}} />
@@ -12,8 +17,10 @@ export const ShowMovie = (props) => {
                 </Text>
             </View>
             <View style={styles.viewersContainer}>
+            {/* <EyeOutlined /> */}
+            <Icon name='eye' type='font-awesome' />
                 <View style={styles.viewersText}>
-                    <Text>{viewers}</Text>
+                    <Text>{numberWithCommas(viewers)}</Text>
                 </View>
             </View>
         </View>
