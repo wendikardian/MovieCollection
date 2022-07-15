@@ -11,11 +11,18 @@ const TryCodeScreen = () => {
                     <FlatList contentContainerStyle={{padding: 8}} data={userData} keyExtractor={(item) => item.id} 
                         renderItem ={ ({item}) => {
                             return(
-                                <View style={styles.containerAnItem}>
+                                <View style={[styles.containerAnItem,
+                                        {backgroundColor : item.gender.toLowerCase() === `male` ? 'moccasin' : 'lavender'}
+                                ]}>
                                     <Image source={{uri: item.imageLink}} style={styles.imgStyleItem} />
                                     <Text>{item.name}</Text>
                                     <Text>{item.gender}</Text>
                                     <Text>{item.age}</Text>
+                                    {
+                                        item.age >= 6 && item.age <= 12 ? <Text>Child</Text> 
+                                        : item.age >=13 && item.age <= 18 ? <Text>Teen</Text> 
+                                        : item.age >= 18 && item.age <= 64 ? <Text>Adult</Text> :null
+                                    }
                                 </View>
                             )
                         }}
