@@ -101,7 +101,7 @@ const HomeScreen = (props) => {
                     </View>
                     <FlatList horizontal data={mostViewed} keyExtractor={(item) => item.id} renderItem={({item}) => { 
                         return(
-                            <ShowMovie image={item.imageLink} title={item.title} viewers={item.viewers} />
+                            <ShowMovie image={item.imageLink} title={item.title} viewers={item.viewers} isHome={true} />
                         )
                     }} 
                     contentContainerStyle={{
